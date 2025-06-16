@@ -3,21 +3,17 @@
 ## Overview
 This MikroTik script is designed to scan and discover devices on a network by analyzing IP addresses and MAC addresses on the router's interfaces. It performs an IP scan on non-point-to-point subnets, retrieves device information from the bridge host table, and attempts to identify device vendors based on their MAC addresses. The script outputs details such as interface, MAC address, IP address, hostname (if available), and vendor information.
 
-## Capabilities
-1. **Subnet Scanning**:
+## How
+1. **Subnet Scanning to fill ARP table**:
    - Iterates through all IP addresses configured on the router.
    - Performs an IP scan on these subnets using the `/tool ip-scan` command to discover devices.
-
 2. **Device Information Retrieval**:
    - Scans the bridge host table to retrieve MAC addresses and their associated interfaces.
    - Filters out invalid or specific MAC addresses (e.g., those starting with "BA:BE").
    - Retrieves IP addresses and hostnames (if available) from DHCP leases or ARP table entries.
-
 3. **Vendor Lookup**:
    - Uses a predefined `vendorMap` to map MAC address prefixes to known vendors (e.g., MikroTik, Ubiquiti Networks).
    - For unknown MAC prefixes, performs an HTTP request to an external service (`http://d0wn.com/mac.php`) to fetch vendor information.
-   - Falls back to "Unknown" or "Unknown (fetch failed)" if the lookup fails.
-
 4. **Output**:
    - Prints detailed information for each discovered device, including:
      - Interface name
@@ -33,7 +29,6 @@ The script includes a `vendorMap` dictionary that maps MAC address prefixes to v
 :local vendorMap {
   "18:FD:74"="Mikrotik";
   "78:9A:18"="Mikrotik";
-  "60:22:32"="Ubiquiti Networks";
   "18:E8:29"="Ubiquiti Networks";
   "00:15:5D"="TP-Link";
   "00:0C:29"="VMware"
@@ -46,11 +41,6 @@ Adding more entries to `vendorMap` reduces reliance on the external lookup servi
 1. Copy the script file into you mikrotik device 
 2. Run the script using the command: `/import host.rsc`.
 3. Monitor the output in the terminal for discovered devices and their details.
-
-## Notes
-- Ensure the router has internet access if you rely on the external vendor lookup service (`http://d0wn.com/mac.php`).
-- Modify the `vendorMap` to include MAC prefixes for devices commonly found in your network to optimize performance.
-- The script skips point-to-point IP addresses (e.g., /32 subnets) to avoid unnecessary scanning.
 
 
 ## Example Output
